@@ -1,0 +1,60 @@
+# Introduction
+Welcome to our presentation! We chose to develop a Mario-style platformer as our project because we had inspired by Nintendo game called Super Mario Bros. Today we will tell you how we developed a game using the CDM-16 processor and Logisim.
+
+
+# What is our game?
+
+ • We created a simple platform game that, like an original game, has basic mechanics like moving around the map, jumping, killing enemies.
+ • The game character travels around the map avoiding obstacles such as stairs,  and encounters ground and flying enemies along the way.
+ • The player gets points for living and killing enemies.
+
+
+# Goals and Objectives
+ • Learn how to work in a team.
+ • Develop an assembler program with implemented game logic.
+ • Design a functional circuit in Logisim to display the game in a matrix.
+ • Merge the assembler and Logisim parts.
+ • Debug and test the program to avoid bugs and improve the stability of the game.
+
+
+
+# Structure of cdm-16
+
+In our project, there are 5 assembler files - main, map, enemy, mario, trigger - each with their own functions. The main function forms the base, within which we initialize the map using the set_up function, then we place enemies using the set_coordinates function and place Mario; after this, the game logic loop begins. To start, we increase the score for the player being alive using inc_points. After that, we move the ground enemy towards Mario, using the subroutines check_map_left(right) to ensure the enemy doesn't fall off the platform, and check_pixel to ensure the enemy stands on the platform.
+
+We also move the flying enemy towards Mario, and when it is directly above, it drops down on the player, checking whether the enemy has landed on the platform using check_sky_enemy_under_map and check_under_pixel.
+
+Then we move Mario based on player actions. To do this accurately, we check that Mario does not exit the map, otherwise, we prevent the player from doing so. If Mario moves beyond half the map, we move the map itself while keeping Mario in place. In case of a jump, we check whether the player is on the ground or a platform. Since there is gravity in the game, we continuously decrease y.
+
+After all the above, we can check for collisions between the player and enemies. In the event of a collision, we check whether the player is falling or not; if the player is falling, they kill the enemy, otherwise, they get killed.
+
+At the end of all this, we refresh the screen.
+
+
+
+# Structure of Logisim
+
+In our project, we have a main circuit called main and 8 sub-schemes:
+
+6 schemes for rendering sprites:
+- super_mux and sprite for rendering the main hero's sprite
+- super_mux2, super_mux3, and sprite2, sprite3 for rendering the enemies.
+We use super_mux to determine the specific column in which to draw a part of the 3x3 sprite.
+
+And two more schemes:
+- scoreboard - a scheme that displays the player's score on the screen. It implements the conversion from hexadecimal to decimal numbering system.
+- chip - the most important sub-scheme, responsible for rendering everything on the screen in a specific column of the matrix located in main.
+
+The main scheme, roughly speaking, assembles all the components. In particular, the CDM-16 processor, which provides connectivity of Logisim to the assembler files. It also contains the matrix to which the chips are connected below.
+
+Now we will demonstrate the gameplay of the game.
+
+
+
+# Gameplay overview
+video.mp4
+
+
+
+# Conclusion
+It was a difficult challenge to make this game in Assembler and Logisim, but it allows us to think more deeply and perhaps create it on the controller.
