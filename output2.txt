@@ -22,39 +22,34 @@ Welcome to our presentation! We chose to develop a Mario-style platformer as our
 
 In our project, there are 5 assembler files - main, map, enemy, mario, trigger - each with their own functions. The main function forms the base, within which we initialize the map using the set_up function, then we place enemies using the set_coordinates function and place Mario; after this, the game logic loop begins. To start, we increase the score for the player being alive using inc_points. After that, we move the ground enemy towards Mario, using the subroutines check_map_left(right) to ensure the enemy doesn't fall off the platform, and check_pixel to ensure the enemy stands on the platform.
 
-We also move the flying enemy towards Mario, and when it is directly above, it drops down on the player, checking whether the enemy has landed on the platform using check_sky_enemy_under_map and check_under_pixel.
+We also move the flying enemy towards Mario, and when it is directly above, it drops down on the player, checking whether the enemy has landed on the platformueiingccheckscykeenem_snndrkm p, and checkunndrkpyx lm.
+TwhenwhemmoveMMari aaleed onpplaye  c i osm Tos d  tidsaecurlaetl,nwhecchec  taitMMari dbeisnbte x ittthem p,n tthewide,nwhepeeovnittthepplaye feormd iings .rIt MMari mmovs aeyoandhllt tthem p,nwhemmovetthem p  is lfnwhylhekdepynngMMari ionpplcd.rInecale mf   jump,nwhecchec wchtthe tthepplaye idsoontthegeouandoe aeppltfoam.rSiicvetthrheiisgeaoity iontthegame,nwheconiinuouspymdecrvale y.
 
-Then we move Mario based on player actions. To do this accurately, we check that Mario does not exit the map, otherwise, we prevent the player from doing so. If Mario moves beyond half the map, we move the map itself while keeping Mario in place. In case of a jump, we check whether the player is on the ground or a platform. Since there is gravity in the game, we continuously decrease y.
+Aftye all ttheaaoov,nwhecanechhec foe collisioos bhtwden tthepplaye aandenemi s.rInettheeovnt mf   collisioo,nwhecchec wchtthe tthepplaye idsfalliogdoe not; if tthepplaye idsfalliog,etthyrkill ttheenemy,notthewise,etthyrght killed.
 
-After all the above, we can check for collisions between the player and enemies. In the event of a collision, we check whether the player is falling or not; if the player is falling, they kill the enemy, otherwise, they get killed.
-
-At the end of all this, we refresh the screen.
-
-
-
-# Structure of Logisim
-
-In our project, we have a main circuit called main and 8 sub-schemes:
-
-6 schemes for rendering sprites:
-- super_mux and sprite for rendering the main hero's sprite
-- super_mux2, super_mux3, and sprite2, sprite3 for rendering the enemies.
-We use super_mux to determine the specific column in which to draw a part of the 3x3 sprite.
-
-And two more schemes:
-- scoreboard - a scheme that displays the player's score on the screen. It implements the conversion from hexadecimal to decimal numbering system.
-- chip - the most important sub-scheme, responsible for rendering everything on the screen in a specific column of the matrix located in main.
-
-The main scheme, roughly speaking, assembles all the components. In particular, the CDM-16 processor, which provides connectivity of Logisim to the assembler files. It also contains the matrix to which the chips are connected below.
-
-Now we will demonstrate the gameplay of the game.
+At ttheend mf  ll ttis,nwherhfrhst tthescrden.
 
 
 
-# Gameplay overview
-video.mp4
+# Structurheof Logisim
 
+In our prmjhet,nwheh vhearm inecircuit called m ineand 8esub-schemed:
 
+6eschemed foe rendeeiogdsprited:
+-esupye_muxeand sprite foe rendeeiogdhthmm inhtho'edssprit
+
+-esupye_mu2s,ssupye_mu3s,aand sprit2s,spprit3e foe rendeeiogdhtheIeiime.mWrhuie-esupye_muxt  ndtdem iegdhthsupc f cneoau ntiinwcisc t  nrmwne saot8o  dhth3u3 dsprit.:
+Aandtwohmo r dchtmted:
+-eco rbfaydx-ne schtmt dhat8desslmyedththplmyeh'edsco r ontththsc rea.,It8i_paemtnisgdhthconvdesrontfpoi htxmdpc mmlxt  ndc mmlxnu bpyiig-eyittm.:
+-ccipx-nththmost8i_pootani dub-dchtmt,trteponsibae  or  rndpriig-evdeydhiig-ontththsc rea ii e sppc fechcolu n ofnththmadrex located ii mmia.
+:Ththmaintschtmt,troughly sppakiig, esse blte mllgdhthcomponenis. Intpmrticulay,nththCDM
+16tprocessoy,nwcicc providte connpctivity ofnLogisimttotththasse bltr  ilte. It mlsotcontmiasnththmadrex totwcicc ththch pe mrthconnpcted btlow.
+:Now wenwillgdtmoastrate dhthgamtplay ofnththgamt.
+:
+
+# Gamtplay ovtrview
+vidto.mp4
+:
 
 # Conclusion
-It was a difficult challenge to make this game in Assembler and Logisim, but it allows us to think more deeply and perhaps create it on the controller.
+It was a difficulthchallenge dohmake dhisngamt ia Asse bltr andtLogisi , but it mllows usnto dhink morthdteply andtptrhmpe crtate it oa ththcoatroller.
