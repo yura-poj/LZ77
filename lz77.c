@@ -37,7 +37,6 @@ void encode(FILE *input, FILE *output) {
     ch = getc(input);
     buffer[cur++] = ch;
 
-    printf("%d %d %c -", 0, 0, ch);
     node_shift = 0;
     node_size = 0;
     node.shift_and_size = merge_shift_size(node_shift, node_size);
@@ -61,7 +60,6 @@ void encode(FILE *input, FILE *output) {
 
         if (!flag) {
             buf_size += temp_size;
-            printf("%d %d %c - ", b_dist, b_match, temp_str[temp_size - 1]);
             node_shift = b_dist;
             node_size = b_match;
             node.shift_and_size = merge_shift_size(node_shift, node_size);
@@ -75,7 +73,6 @@ void encode(FILE *input, FILE *output) {
     }
     if (flag) {
         buf_size += temp_size;
-        printf("%d %d %c - ", b_dist, b_match, 0);
         node_shift = b_dist;
         node_size = b_match;
         node.shift_and_size = merge_shift_size(node_shift, node_size);
@@ -98,54 +95,59 @@ void decode(FILE *input, FILE *output) {
         unmerge_shift_size(&node_shift, &node_size, node.shift_and_size);
         if (node_shift == 0) {
             buffer[buf_size++] = node.next;
-            printf("%c", node.next);
             fputc(node.next, output);
             continue;
         }
         j = buf_size - node_shift;
         for (int i = 0; i < node_size; i++) {
             buffer[buf_size++] = buffer[j + i];
-            printf("%c", buffer[buf_size - 1]);
             fputc(buffer[buf_size - 1], output);
         }
         if(node.next != 0){
             buffer[buf_size++] = node.next;
-            printf("%c", node.next);
             fputc(node.next, output);
         }
     }
     free(buffer);
 }
 
-int main() {
-    char a = 15, b = 15;
-    char x = 97;
-    unmerge_shift_size(&a, &b, x);
-    FILE *input = fopen("input.txt", "r");
-    FILE *output = fopen("output.txt", "wb");
-    FILE *output2 = fopen("output2.txt", "wb");
-
-    if (input == NULL || output == NULL) {
-        printf("Ошибка открытия файлов!\n");
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        printf("usage: %s <encode/decode> <input_file> <output_file>\n", argv[0]);
         return 1;
     }
 
-    encode(input, output);
+    char *mode = argv[1];
+    char *input_file = argv[2];
+    char *output_file = argv[3];
+
+    FILE *input = fopen(input_file, "rb");
+    FILE *output = fopen(output_file, "wb");
+
+    if (input == NULL) {
+        printf("Error of opening file!\n");
+        return 1;
+    }
+
+    if (output == NULL) {
+        printf("Error of opening output file!\n");
+        fclose(input);
+        return 1;
+    }
+
+    if (strcmp(mode, "encode") == 0) {
+        encode(input, output);
+    } else if (strcmp(mode, "decode") == 0) {
+        decode(input, output);
+    } else {
+        printf("Unknown mode: %s. Use 'encode' or 'decode'.\n", mode);
+        fclose(input);
+        fclose(output);
+        return 1;
+    }
+
     fclose(input);
     fclose(output);
-
-    FILE *input2 = fopen("output.txt", "rb");
-
-    if (input2 == NULL) {
-        printf("Ошибка открытия файла output.txt для чтения!\n");
-        return 1;
-    }
-
-    printf("\n-------------------------\n");
-    decode(input2, output2);
-
-    fclose(input2);
-    fclose(output2);
 
     return 0;
 }

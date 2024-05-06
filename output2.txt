@@ -1,60 +1,48 @@
-# Introduction
-Welcome to our presentation! We chose to develop a Mario-style platformer as our project because we had inspired by Nintendo game called Super Mario Bros. Today we will tell you how we developed a game using the CDM-16 processor and Logisim.
+You shouldn’t force yourself to pee if you don’t have to for medical reasons. If you do have to force yourself, here are 10 strategies that may work:
 
+1. Run the water
+Turn on the faucet in your sink. Sit on the toilet. Try to relax, close your eyes, and focus on the sound of the water.
 
-# What is our game?
+2. Rinse your perineum
+The perineum is the area of flesh between the genitals and the anus. Sit on the toilet and try to relax. Use a squirt bottle to rinse your perineum with warm water.
 
- • We created a simple platform game that, like an original game, has basic mechanics like moving around the map, jumping, killing enemies.
- • The game character travels around the map avoiding obstacles such as stairs,  and encounters ground and flying enemies along the way.
- • The player gets points for living and killing enemies.
+3. Hold your hands in warm or cold water
+Fill a shallow bowl with warm or cold water and place your fingertips into it. Hold them there until you get the urge to pee, and then try to do so into the toilet.
 
+4. Go for a walk
+Physical activity can sometimes stimulate the bladder. Try walking around a room or a hallway until you feel you need to pee.
 
-# Goals and Objectives
- • Learn how to work in a team.
- • Develop an assembler program with implemented game logic.
- • Design a functional circuit in Logisim to display the game in a matrix.
- • Merge the assembler and Logisim parts.
- • Debug and test the program to avoid bugs and improve the stability of the game.
+5. Sniff peppermint oil
+The smell of peppermint oil may give you the urge to pee. Place a few drops on a cotton ball and bring it with you to the toilet. Sit on the toilet, relax, and sniff the cotton ball. You might also want to try putting the peppermint oil directly into the toilet.
 
+Find peppermint oil on Amazon.com.
 
+6. Bend forward
+Sit on the toilet and relax. When you’re ready to try to pee, bend forward. This may stimulate your bladder.
 
-# Structure of cdm-16
+7. Try the Valsalva maneuver
+Sit on the toilet and bear down, as if you were having a bowel movement. Use your forearm to press gently on your lower abdomen — but take care not to press directly on your bladder. Urine that moves back up into the kidneys can cause infection or damage.
 
-In our project, there are 5 assembler files - main, map, enemy, mario, trigger - each with their own functions. The main function forms the base, within which we initialize the map using the set_up function, then we place enemies using the set_coordinates function and place Mario; after this, the game logic loop begins. To start, we increase the score for the player being alive using inc_points. After that, we move the ground enemy towards Mario, using the subroutines check_map_left(right) to ensure the enemy doesn't fall off the platform, and check_pixel to ensure the enemy stands on the platform.
+8. Try the subrapubic tap
+Sit on the toilet and relax. Use your fingertips to rapidly tap the area between your navel and pubic bone (for women) or penis (for men). Tap once a second for up to 30 seconds.
 
-We also move the flying enemy towards Mario, and when it is directly above, it drops down on the player, checking whether the enemy has landed on the platform using check_sky_enemy_under_map and check_under_pixel.
+9. Use relaxation techniques
+Sit on the toilet and relax as much as you can. To relax further, close your eyes and begin breathing deeply. Make an effort to relax all of the muscles in your body, from head to toe.
 
-Then we move Mario based on player actions. To do this accurately, we check that Mario does not exit the map, otherwise, we prevent the player from doing so. If Mario moves beyond half the map, we move the map itself while keeping Mario in place. In case of a jump, we check whether the player is on the ground or a platform. Since there is gravity in the game, we continuously decrease y.
+10. Touch your thigh
+Sit on the toilet and relax. Stroke your inner thigh with your fingertips. This may stimulate urination.
 
-After all the above, we can check for collisions between the player and enemies. In the event of a collision, we check whether the player is falling or not; if the player is falling, they kill the enemy, otherwise, they get killed.
+Why would you need to make yourself pee?
+Have you ever wondered how your body knows when it’s time to urinate? Your nerve system directs your body to alert your brain when your bladder is full. When you have to pee, you feel a pressurized sensation in your abdomen, signaling that it’s time to visit the bathroom.
 
-At the end of all this, we refresh the screen.
+In some situations, you might have to force your body to pee. This might be when your doctor asks you to give urine for analysis at a checkup. This is called a urinalysis. Your doctor will give you a sterile plastic container into which you urinate, and they’ll run various tests on your urine sample.
 
+Or you might have trouble after surgery if you develop a common condition called neurogenic bladder, which interferes with your normal nerve signals from the bladder to the brain. This makes it difficult or impossible for your body to figure out whether or not it has to release urine. Urine contains waste products that can be dangerous to the body if you “hold it in.”
 
+Many medications can cause temporary urinary retention.
 
-# Structure of Logisim
+Things to consider
+The key to urinating on command is being able to relax enough to let it happen. While it can be difficult to do this, for medical reasons it’s sometimes necessary.
 
-In our project, we have a main circuit called main and 8 sub-schemes:
+If you still have trouble passing urine after attempting these techniques, alert your doctor right away. You may require catheterization, or you may have a condition that’s impairing your ability to urinate.
 
-6 schemes for rendering sprites:
-- super_mux and sprite for rendering the main hero's sprite
-- super_mux2, super_mux3, and sprite2, sprite3 for rendering the enemies.
-We use super_mux to determine the specific column in which to draw a part of the 3x3 sprite.
-
-And two more schemes:
-- scoreboard - a scheme that displays the player's score on the screen. It implements the conversion from hexadecimal to decimal numbering system.
-- chip - the most important sub-scheme, responsible for rendering everything on the screen in a specific column of the matrix located in main.
-
-The main scheme, roughly speaking, assembles all the components. In particular, the CDM-16 processor, which provides connectivity of Logisim to the assembler files. It also contains the matrix to which the chips are connected below.
-
-Now we will demonstrate the gameplay of the game.
-
-
-
-# Gameplay overview
-video.mp4
-
-
-
-# Conclusion
-It was a difficult challenge to make this game in Assembler and Logisim, but it allows us to think more deeply and perhaps create it on the controller.
