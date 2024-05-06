@@ -2,17 +2,32 @@
 #include "stdlib.h"
 #include "string.h"
 
-#define WINDOW_SIZE 7
+#define WINDOW_SIZE 15
 #define ARRAY_SIZE 100000
 
 typedef struct Node {
-    char shift;
-    char size;
+    char shift_and_size; //format '11110000' '1111' - shift and '0000'-size
     char next;
 } Node;
 
+char merge_shift_size(char shift, char size){
+    shift %= 32;
+    size %= 32;
+    return (shift << 4) | size;
+}
+
+void unmerge_shift_size(char* shift, char*size, char shift_and_size){
+    char new_shift = -16;
+    char new_size = 15;
+    new_shift = new_size & ((new_shift & shift_and_size) >> 4);
+    new_size = new_size & shift_and_size;
+    *shift = new_shift;
+    *size = new_size;
+}
+
 void encode(FILE *input, FILE *output) {
     Node node;
+    char node_shift, node_size;
     char *buffer = calloc(sizeof(char), ARRAY_SIZE);
     char *temp_str = calloc(sizeof(char), ARRAY_SIZE);
     int buf_size = 1, cur = 0, window = 0, temp_size = 0;
@@ -23,8 +38,9 @@ void encode(FILE *input, FILE *output) {
     buffer[cur++] = ch;
 
     printf("%d %d %c -", 0, 0, ch);
-    node.shift = 0;
-    node.size = 0;
+    node_shift = 0;
+    node_size = 0;
+    node.shift_and_size = merge_shift_size(node_shift, node_size);
     node.next = ch;
     fwrite(&node, sizeof(Node), 1, output);
 
@@ -40,11 +56,15 @@ void encode(FILE *input, FILE *output) {
                 flag = 1;
             }
         }
+
+        if(temp_size == 15) flag = 0;
+
         if (!flag) {
             buf_size += temp_size;
             printf("%d %d %c - ", b_dist, b_match, temp_str[temp_size - 1]);
-            node.shift = b_dist;
-            node.size = b_match;
+            node_shift = b_dist;
+            node_size = b_match;
+            node.shift_and_size = merge_shift_size(node_shift, node_size);
             node.next = temp_str[temp_size - 1];
             fwrite(&node, sizeof(Node), 1, output);
             temp_size = 0;
@@ -56,8 +76,9 @@ void encode(FILE *input, FILE *output) {
     if (flag) {
         buf_size += temp_size;
         printf("%d %d %c - ", b_dist, b_match, 0);
-        node.shift = b_dist;
-        node.size = b_match;
+        node_shift = b_dist;
+        node_size = b_match;
+        node.shift_and_size = merge_shift_size(node_shift, node_size);
         node.next = 0;
         fwrite(&node, sizeof(Node), 1, output);
     }
@@ -69,18 +90,20 @@ void encode(FILE *input, FILE *output) {
 void decode(FILE *input, FILE *output) {
     int x, j;
     Node node;
+    char node_shift, node_size;
     char *buffer = calloc(sizeof(char), ARRAY_SIZE);
     int buf_size = 0;
 
     while ((x = fread(&node, sizeof(Node), 1, input)) > 0) {
-        if (node.shift == 0) {
+        unmerge_shift_size(&node_shift, &node_size, node.shift_and_size);
+        if (node_shift == 0) {
             buffer[buf_size++] = node.next;
             printf("%c", node.next);
             fputc(node.next, output);
             continue;
         }
-        j = buf_size - node.shift;
-        for (int i = 0; i < node.size; i++) {
+        j = buf_size - node_shift;
+        for (int i = 0; i < node_size; i++) {
             buffer[buf_size++] = buffer[j + i];
             printf("%c", buffer[buf_size - 1]);
             fputc(buffer[buf_size - 1], output);
@@ -94,43 +117,35 @@ void decode(FILE *input, FILE *output) {
     free(buffer);
 }
 
-int main(int argc, char *argv[]) {
-    if (argc != 4) {
-        printf("Использование: %s <encode/decode> <input_file> <output_file>\n", argv[0]);
+int main() {
+    char a = 15, b = 15;
+    char x = 97;
+    unmerge_shift_size(&a, &b, x);
+    FILE *input = fopen("input.txt", "r");
+    FILE *output = fopen("output.txt", "wb");
+    FILE *output2 = fopen("output2.txt", "wb");
+
+    if (input == NULL || output == NULL) {
+        printf("Ошибка открытия файлов!\n");
         return 1;
     }
 
-    char *mode = argv[1];
-    char *input_file = argv[2];
-    char *output_file = argv[3];
-
-    FILE *input = fopen(input_file, "rb");
-    FILE *output = fopen(output_file, "wb");
-
-    if (input == NULL) {
-        printf("Ошибка открытия входного файла!\n");
-        return 1;
-    }
-
-    if (output == NULL) {
-        printf("Ошибка открытия выходного файла!\n");
-        fclose(input);
-        return 1;
-    }
-
-    if (strcmp(mode, "encode") == 0) {
-        encode(input, output);
-    } else if (strcmp(mode, "decode") == 0) {
-        decode(input, output);
-    } else {
-        printf("Неизвестный режим: %s. Используйте 'encode' или 'decode'.\n", mode);
-        fclose(input);
-        fclose(output);
-        return 1;
-    }
-
+    encode(input, output);
     fclose(input);
     fclose(output);
+
+    FILE *input2 = fopen("output.txt", "rb");
+
+    if (input2 == NULL) {
+        printf("Ошибка открытия файла output.txt для чтения!\n");
+        return 1;
+    }
+
+    printf("\n-------------------------\n");
+    decode(input2, output2);
+
+    fclose(input2);
+    fclose(output2);
 
     return 0;
 }

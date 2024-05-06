@@ -2,8 +2,10 @@
 triple:          'arm64-apple-darwin'
 binary-path:     lz77
 relocations:
-  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _encode, symObjAddr: 0x0, symBinAddr: 0x10000397C, symSize: 0x344 }
-  - { offsetInCU: 0x41, offset: 0x41, size: 0x8, addend: 0x0, symName: _encode, symObjAddr: 0x0, symBinAddr: 0x10000397C, symSize: 0x344 }
-  - { offsetInCU: 0x12A, offset: 0x12A, size: 0x8, addend: 0x0, symName: _decode, symObjAddr: 0x344, symBinAddr: 0x100003CC0, symSize: 0x1A0 }
-  - { offsetInCU: 0x1C4, offset: 0x1C4, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x4E4, symBinAddr: 0x100003E60, symSize: 0x94 }
+  - { offsetInCU: 0x26, offset: 0x26, size: 0x8, addend: 0x0, symName: _merge_shift_size, symObjAddr: 0x0, symBinAddr: 0x1000036B8, symSize: 0x50 }
+  - { offsetInCU: 0x42, offset: 0x42, size: 0x8, addend: 0x0, symName: _merge_shift_size, symObjAddr: 0x0, symBinAddr: 0x1000036B8, symSize: 0x50 }
+  - { offsetInCU: 0x78, offset: 0x78, size: 0x8, addend: 0x0, symName: _unmerge_shift_size, symObjAddr: 0x50, symBinAddr: 0x100003708, symSize: 0x68 }
+  - { offsetInCU: 0xD4, offset: 0xD4, size: 0x8, addend: 0x0, symName: _encode, symObjAddr: 0xB8, symBinAddr: 0x100003770, symSize: 0x37C }
+  - { offsetInCU: 0x1D9, offset: 0x1D9, size: 0x8, addend: 0x0, symName: _decode, symObjAddr: 0x434, symBinAddr: 0x100003AEC, symSize: 0x200 }
+  - { offsetInCU: 0x281, offset: 0x281, size: 0x8, addend: 0x0, symName: _main, symObjAddr: 0x634, symBinAddr: 0x100003CEC, symSize: 0x15C }
 ...
