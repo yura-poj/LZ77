@@ -3,7 +3,7 @@
 #include "string.h"
 
 #define WINDOW_SIZE 7
-#define ARRAY_SIZE 10000
+#define ARRAY_SIZE 100000
 
 typedef struct Node {
     char shift;
@@ -94,32 +94,43 @@ void decode(FILE *input, FILE *output) {
     free(buffer);
 }
 
-int main() {
-    FILE *input = fopen("input.txt", "r");
-    FILE *output = fopen("output.txt", "wb");
-    FILE *output2 = fopen("output2.txt", "wb");
-
-    if (input == NULL || output == NULL) {
-        printf("Ошибка открытия файлов!\n");
+int main(int argc, char *argv[]) {
+    if (argc != 4) {
+        printf("Использование: %s <encode/decode> <input_file> <output_file>\n", argv[0]);
         return 1;
     }
 
-    encode(input, output);
+    char *mode = argv[1];
+    char *input_file = argv[2];
+    char *output_file = argv[3];
+
+    FILE *input = fopen(input_file, "rb");
+    FILE *output = fopen(output_file, "wb");
+
+    if (input == NULL) {
+        printf("Ошибка открытия входного файла!\n");
+        return 1;
+    }
+
+    if (output == NULL) {
+        printf("Ошибка открытия выходного файла!\n");
+        fclose(input);
+        return 1;
+    }
+
+    if (strcmp(mode, "encode") == 0) {
+        encode(input, output);
+    } else if (strcmp(mode, "decode") == 0) {
+        decode(input, output);
+    } else {
+        printf("Неизвестный режим: %s. Используйте 'encode' или 'decode'.\n", mode);
+        fclose(input);
+        fclose(output);
+        return 1;
+    }
+
     fclose(input);
     fclose(output);
-
-    FILE *input2 = fopen("output.txt", "rb");
-
-    if (input2 == NULL) {
-        printf("Ошибка открытия файла output.txt для чтения!\n");
-        return 1;
-    }
-
-    printf("\n-------------------------\n");
-    decode(input2, output2);
-
-    fclose(input2);
-    fclose(output2);
 
     return 0;
 }
