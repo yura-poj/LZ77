@@ -98,9 +98,6 @@ void decode(FILE *input, FILE *output) {
 }
 
 int main() {
-    char a = 15, b = 15;
-    char x = 97;
-    unmerge_shift_size(&a, &b, x);
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "wb");
     FILE *output2 = fopen("output2.txt", "wb");
