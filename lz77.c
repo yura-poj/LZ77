@@ -40,6 +40,9 @@ void encode(FILE *input, FILE *output) {
                 flag = 1;
             }
         }
+
+        if(temp_size == 15) flag = WINDOW_SIZE;
+
         if (!flag) {
             buf_size += temp_size;
             printf("%d %d %c - ", b_dist, b_match, temp_str[temp_size - 1]);
@@ -95,6 +98,9 @@ void decode(FILE *input, FILE *output) {
 }
 
 int main() {
+    char a = 15, b = 15;
+    char x = 97;
+    unmerge_shift_size(&a, &b, x);
     FILE *input = fopen("input.txt", "r");
     FILE *output = fopen("output.txt", "wb");
     FILE *output2 = fopen("output2.txt", "wb");
