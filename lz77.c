@@ -1,9 +1,14 @@
 #include "stdio.h"
 #include "stdlib.h"
 #include "string.h"
+#include <sys/stat.h>
+#include <time.h>
+
+
 
 #define WINDOW_SIZE 255
-#define ARRAY_SIZE 100000
+
+int array_size;
 
 typedef struct Node {
     unsigned char shift;
@@ -13,8 +18,8 @@ typedef struct Node {
 
 void encode(FILE *input, FILE *output) {
     Node node;
-    char *buffer = calloc(sizeof(char), ARRAY_SIZE);
-    char *temp_str = calloc(sizeof(char), ARRAY_SIZE);
+    char *buffer = calloc(sizeof(char), array_size);
+    char *temp_str = calloc(sizeof(char), array_size);
     int buf_size = 1, cur = 0, window = 0, temp_size = 0;
     int b_match = 0, b_dist = 0, flag = 0;
     char ch;
@@ -40,7 +45,7 @@ void encode(FILE *input, FILE *output) {
             }
         }
 
-        if(temp_size == 255) flag = WINDOW_SIZE;
+        if(temp_size == WINDOW_SIZE) flag = 0;
 
         if (!flag) {
             buf_size += temp_size;
@@ -69,7 +74,7 @@ void encode(FILE *input, FILE *output) {
 void decode(FILE *input, FILE *output) {
     int x, j;
     Node node;
-    char *buffer = calloc(sizeof(char), ARRAY_SIZE);
+    char *buffer = calloc(sizeof(char), array_size);
     int buf_size = 0;
 
     while ((x = fread(&node, sizeof(Node), 1, input)) > 0) {
@@ -91,7 +96,70 @@ void decode(FILE *input, FILE *output) {
     free(buffer);
 }
 
+long long size_file(char* input){
+    struct stat st;
+    stat(input, &st);
+
+    return (long long) st.st_size;
+}
+
+long long difference(char* input, char* output){
+    return size_file(input) - size_file(output);
+}
+
+void test(){
+    FILE *input = fopen("input.txt", "r");
+    FILE *output = fopen("output.txt", "wb");
+    FILE *output2 = fopen("output2.txt", "wb");
+
+    if (input == NULL || output == NULL) {
+        printf("Ошибка открытия файлов!\n");
+    }
+    array_size = (int)size_file("input.txt");
+    clock_t start = clock();
+    encode(input, output);
+    clock_t end = clock();
+    double elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
+
+    array_size = array_size = (int)size_file("output.txt") * 100;
+    fclose(output);
+    fclose(input);
+
+    FILE *input2 = fopen("output.txt", "rb");
+
+    if (input2 == NULL) {
+        printf("Ошибка открытия файла output.txt для чтения!\n");
+    }
+
+    start = clock();
+    decode(input2, output2);
+    end = clock();
+    elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
+    printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
+
+    fclose(output2);
+    input = fopen("input.txt", "r");
+    output2 = fopen("output2.txt", "r");
+
+    char ch1 = 1, ch2 = 1;
+    while (ch1 != EOF || ch2 != EOF) {
+        if (ch1 != ch2) {
+            printf("%c %c - Error!\n", ch1, ch2);
+        }
+        ch1 = getc(input);
+        ch2 = getc(output2);
+    }
+    printf("%lld\n", difference("input.txt", "output.txt"));
+
+    fclose(input2);
+    fclose(output2);
+    printf("Success");
+}
+
 int main(int argc, char *argv[]) {
+    test();
+    return 0;
     if (argc != 4) {
         printf("usage: %s <encode/decode> <input_file> <output_file>\n", argv[0]);
         return 1;
