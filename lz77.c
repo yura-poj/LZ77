@@ -118,41 +118,78 @@ long long difference(char* input, char* output){
 }
 
 void test(){
-    char input[] = "input.txt";
-    char output[] = "output.txt";
-    char output2[] = "output2.txt";
+    char path[] = "inputs";
+    char out_path[] = "outputs";
+    char out_path2[] = "inputs2";
 
-    array_size = (int)size_file(input) * 100;
-    clock_t start = clock();
-    encode(input, output);
-    clock_t end = clock();
-    double elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
+    char new_path[100];
+    char new_out_path[100];
+    char check_path[100];
+    DIR *dir = opendir(path);
+    if (dir == NULL) {
+        printf("Не удалось открыть каталог: %s\n", path);
+        return;
+    }
+    int status = mkdir(out_path, 0700);
 
-    array_size = (int)size_file(output) * 100;
-
-    start = clock();
-    decode(output, output2);
-    end = clock();
-    elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
-    printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
 
     char ch1 = 1, ch2 = 1;
 
-    FILE *input_file = fopen(input,"r");
-    FILE *output2_file = fopen(output2,"r");
-    while (ch1 != EOF || ch2 != EOF) {
-        if (ch1 != ch2) {
-            printf("%c %c - Error!\n", ch1, ch2);
-        }
-        ch1 = getc(input_file);
-        ch2 = getc(output2_file);
-    }
-    fclose(input_file);
-    fclose(output2_file);
-    printf("%lld\n", difference(input, output));
 
-    printf("Success");
+    struct dirent *entry;
+    while ((entry = readdir(dir)) != NULL) {
+        if (entry->d_type != DT_DIR) {
+
+            strcpy(new_path, path); //make path to each file
+            strcat(new_path, "/");
+            strcat(new_path, entry->d_name);
+            strcpy(check_path, new_path);
+            strcpy(new_out_path, out_path); //make path to each out file
+            strcat(new_out_path, "/");
+            strcat(new_out_path, entry->d_name);
+
+            array_size = (int)size_file(new_path) * 100;
+
+            clock_t start = clock();
+            encode(new_path, new_out_path);
+            clock_t end = clock();
+            double elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
+            printf("\n\nSource file: %s\n", entry->d_name);
+            printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
+            printf("Разница сжатого файла от исходного в байтах %lld\n", difference(new_path, new_out_path));
+
+            //---------------------------------------------------------------
+            strcpy(new_path, out_path); //make path to each file
+            strcat(new_path, "/");
+            strcat(new_path, entry->d_name);
+            strcpy(new_out_path, out_path2); //make path to each out file
+            strcat(new_out_path, "/");
+            strcat(new_out_path, entry->d_name);
+
+            array_size = (int)size_file(new_path) * 100;
+            start = clock();
+            decode(new_path, new_out_path);
+            end = clock();
+            elapsed_time = (double)(end - start) / CLOCKS_PER_SEC;
+            printf("Время выполнения программы: %.6f секунд\n", elapsed_time);
+
+            FILE *input_file = fopen(check_path,"r");
+            FILE *output2_file = fopen(new_out_path,"r");
+            while (ch1 != EOF || ch2 != EOF) {
+                if (ch1 != ch2) {
+                    printf("%c %c - Error!\n", ch1, ch2);
+                }
+                ch1 = getc(input_file);
+                ch2 = getc(output2_file);
+            }
+            printf("Success");
+            fclose(input_file);
+            fclose(output2_file);
+        }
+    }
+
+    closedir(dir);
+
 }
 
 void listDirectory(const char *path, const char* out_path,const char *mode) {
@@ -171,15 +208,17 @@ void listDirectory(const char *path, const char* out_path,const char *mode) {
 
     struct dirent *entry;
     while ((entry = readdir(dir)) != NULL) {
+        if (strcmp(entry->d_name, ".") == 0 || strcmp(entry->d_name, "..") == 0) {
+            continue;
+        }
+        strcpy(new_path, path); //make path to each file
+        strcat(new_path, "/");
+        strcat(new_path, entry->d_name);
+        strcpy(new_out_path, out_path); //make path to each out file
+        strcat(new_out_path, "/");
+        strcat(new_out_path, entry->d_name);
+
         if (entry->d_type != DT_DIR) {
-
-            strcpy(new_path, path); //make path to each file
-            strcat(new_path, "/");
-            strcat(new_path, entry->d_name);
-            strcpy(new_out_path, out_path); //make path to each out file
-            strcat(new_out_path, "/");
-            strcat(new_out_path, entry->d_name);
-
             array_size = (int)size_file(new_path) * 100;
 
             if (strcmp(mode, "encode") == 0) {
@@ -201,6 +240,8 @@ void listDirectory(const char *path, const char* out_path,const char *mode) {
             } else {
                 printf("Unknown mode: %s. Use 'encode' or 'decode'.\n", mode);
             }
+        } if (entry->d_type == DT_DIR) {
+            listDirectory(new_path, new_out_path,mode);
         }
     }
 
@@ -209,8 +250,17 @@ void listDirectory(const char *path, const char* out_path,const char *mode) {
 
 
 int main(int argc, char *argv[]) {
-//    test();
-//    return 0;
+    test();
+    return 0;
+
+    char path[] = "inputs";
+    char out_path[] = "outputs";
+    char out_path2[] = "inputs2";
+
+    listDirectory(path, out_path, "encode");
+    listDirectory(out_path, out_path2, "decode");
+
+    return 0;
 
     if (argc != 5) {
         printf("usage: %s <encode/decode> <input_file> <output_file> <folder/file>\n", argv[0]);
