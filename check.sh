@@ -1,33 +1,42 @@
 #!/bin/bash
 
 if [ "$#" -ne 1 ]; then
-    echo "Usage: $0 <filename>"
+    echo "Usage: $0 <directory>"
     exit 1
 fi
 
-input_file="$1"
-output_file="${input_file}.zip"
+input_dir="$1"
 
-if [ ! -f "$input_file" ]; then
-    echo "File does not exist: $input_file"
+if [ ! -d "$input_dir" ]; then
+    echo "Directory does not exist: $input_dir"
     exit 1
 fi
 
-start_time=$(gdate +%s%3N)
+for input_file in "$input_dir"/*; do
+    if [ -d "$input_file" ]; then
+        continue
+    fi
 
-zip -r "$output_file" "$input_file"
+    output_file="${input_file}.zip"
 
-end_time=$(gdate +%s%3N)
-elapsed_time=$((end_time - start_time))
+    start_time=$(gdate +%s%3N)
 
-original_size=$(stat -f%z "$input_file")
-compressed_size=$(stat -f%z "$output_file")
+    zip -r "$output_file" "$input_file" &> /dev/null
 
-size_difference=$((original_size - compressed_size))
+    end_time=$(gdate +%s%3N)
 
-echo "Time taken: $elapsed_time milliseconds"
-echo "Original size: $original_size bytes"
-echo "Compressed size: $compressed_size bytes"
-echo "Size difference: $size_difference bytes"
+    elapsed_time=$((end_time - start_time))
 
-rm "$output_file"
+    original_size=$(stat -f%z "$input_file")
+    compressed_size=$(stat -f%z "$output_file")
+
+    size_difference=$((original_size - compressed_size))
+
+    echo "File: $input_file"
+    echo "Time taken: $elapsed_time milliseconds"
+    echo "Original size: $original_size bytes"
+    echo "Compressed size: $compressed_size bytes"
+    echo "Size difference: $size_difference bytes"
+    echo "-------------------------"
+    rm "$output_file"
+done
