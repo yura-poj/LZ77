@@ -15,7 +15,7 @@ int array_size;
 typedef struct Node {
     unsigned char shift;
     unsigned char size;
-    char next;
+    unsigned char next;
 } Node;
 
 void encode(const char *input_str, const char *output_str) {
@@ -28,16 +28,17 @@ void encode(const char *input_str, const char *output_str) {
     int b_match = 0, b_dist = 0, flag = 0;
     char ch;
 
-    ch = getc(input);
+    fscanf(input,"%c",&ch);
     buffer[cur++] = ch;
 
     node.shift = 0;
     node.size = 0;
     node.next = ch;
+    int res;
     fwrite(&node, sizeof(Node), 1, output);
 
-    ch = getc(input);
-    while (ch != EOF) {
+    res = fscanf(input,"%c",&ch);
+    while (res != -1) {
         flag = 0;
         temp_str[temp_size] = ch;
         buffer[buf_size + temp_size++] = temp_str[temp_size];
@@ -61,7 +62,7 @@ void encode(const char *input_str, const char *output_str) {
             b_match = 0;
             b_dist = 0;
         }
-        ch = getc(input);
+        res = fscanf(input,"%c",&ch);
     }
     if (flag) {
         buf_size += temp_size;
