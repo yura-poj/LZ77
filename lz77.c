@@ -54,7 +54,7 @@ void encode(const char *input_str, const char *output_str) {
         temp_size++;
 
         for (int i = 1; i <= buf_size && i <= WINDOW_SIZE; i++) {
-            if (!strncmp(&(buffer[buf_size - i]), temp_str, temp_size)) {
+            if (!memcmp(&(buffer[buf_size - i]), temp_str, temp_size)) {
                 b_match = temp_size;
                 b_dist = i;
                 flag = 1;
