@@ -199,7 +199,8 @@ void test(){
             FILE *input_file = fopen(check_path,"r");
             FILE *output2_file = fopen(new_out_path,"r");
             int res1 =1 , res2 = 1;
-            while (res1 != 0 || res2 != 0) {
+            ch1 = 0; ch2 = 0;
+            while (res1 != 0) {
                 if (ch1 != ch2) {
                     printf("%c %c - Error!\n", ch1, ch2);
                 }
@@ -274,17 +275,8 @@ void listDirectory(const char *path, const char* out_path,const char *mode) {
 
 
 int main(int argc, char *argv[]) {
-    test();
-    return 0;
-
-    char path[] = "inputs";
-    char out_path[] = "outputs";
-    char out_path2[] = "inputs2";
-
-    listDirectory(path, out_path, "encode");
-    listDirectory(out_path, out_path2, "decode");
-
-    return 0;
+//    test();
+//    return 0;
 
     if (argc != 5) {
         printf("usage: %s <encode/decode> <input_file> <output_file> <folder/file>\n", argv[0]);
