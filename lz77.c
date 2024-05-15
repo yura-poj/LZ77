@@ -154,7 +154,7 @@ void test(){
         return;
     }
     int status = mkdir(out_path, 0700);
-
+    int status1 = mkdir(out_path2, 0700);
 
     char ch1 = 1, ch2 = 1;
 
@@ -200,7 +200,7 @@ void test(){
             FILE *output2_file = fopen(new_out_path,"r");
             int res1 =1 , res2 = 1;
             ch1 = 0; ch2 = 0;
-            while (res1 != 0) {
+            while (res1 != 0 && res2 != 0) {
                 if (ch1 != ch2) {
                     printf("%c %c - Error!\n", ch1, ch2);
                 }
