@@ -117,11 +117,9 @@ void decode(const char *input_str, const char *output_str) {
                 buffer[buf_size] = buffer[j + i];
                 fputc(buffer[buf_size++], output);
             }
-            if(node.next != 0){
-                buffer[buf_size] = node.next;
-                fputc(node.next, output);
-                buf_size++;
-            }
+            buffer[buf_size] = node.next;
+            fputc(node.next, output);
+            buf_size++;
         }
     }
 
@@ -200,12 +198,13 @@ void test(){
 
             FILE *input_file = fopen(check_path,"r");
             FILE *output2_file = fopen(new_out_path,"r");
-            while (ch1 != EOF || ch2 != EOF) {
+            int res1 =1 , res2 = 1;
+            while (res1 != 0 || res2 != 0) {
                 if (ch1 != ch2) {
                     printf("%c %c - Error!\n", ch1, ch2);
                 }
-                ch1 = getc(input_file);
-                ch2 = getc(output2_file);
+                res1= fread(&ch1, 1, 1, input_file);
+                res2 = fread(&ch2, 1, 1, output2_file);
             }
             printf("Success");
             fclose(input_file);
